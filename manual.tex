@@ -21,11 +21,10 @@
 	
 	The quick start guide is the fastest way to get NATuG running on any Mac, Windows, or Linux machine. These steps are by no means comprehensive, and are merely a guide to get the program running.
 	
-	\begin{figure}[h] 
+	\begin{figure}[h] \label{fig:github-download-menu}
 		\centering
 		\includegraphics[width=2in]{github-download-menu.png}
 		\caption{Github code download menu}
-		\label{fig:github-download-menu}
 	\end{figure}
 	
 	\begin{enumerate} \label{sect:getting-natug-running}
@@ -35,9 +34,13 @@
 		
 		\begin{enumerate}
 			\item ``\texttt{cd $<$filepath$>$}'' to enter the directory of the project. \label{enum:enter-directory}
+			
 			\item ``\texttt{python~-m~venv~venv}'' to create a virtual environment for the needed libraries to go into.
+			
 			\item ``\texttt{venv/Scripts/activate}'' if you are on windows, or ``source~myenv/bin/activate'' if you are on Mac/Linux, to enter into the virtual environment. You will know that you have successfully entered the virtual environment if the current line in terminal begins with ``(venv).'' \label{enum:activate-venv}
+			
 			\item ``\texttt{python -m pip install -r requirements.txt}'' to automatically install all the needed libraries. They may take a while to download.
+			
 			\item ``\texttt{python -m launcher}'' to run the program. The first launch may take a bit while the code compiles. \label{enum:run-program}
 		\end{enumerate}
 	
@@ -57,7 +60,7 @@ First, go to Section~\ref{sect:getting-natug-running} and follow the instruction
 
 On the right side of the screen, in the config panel, you will find the Nucleic Acid settings tab. This is the area in which settings for the geometry of your DNA. While most of the time you will use NATuG's default profiles for DNA settings (and, most of the time, the MFD B-Type DNA profile), now is a good time to experiment with the different inputs. As you change the different settings, also look at the bottom of the NATuG's window---the Status Bar--when hovering over them. It should display a brief explanation of what the different settings actually are. Observe the Side View Plot and Top View Plot change as the settings update.
 
-\begin{figure}[h]
+\begin{figure}[h] \label{fig:nucleic-acid-tinkering}
 	\caption{Experimenting with Nucleic Acid settings}
 	\centering
 	\begin{subfigure}{.5\textwidth}
@@ -79,7 +82,7 @@ In the config panel on the right side of the screen, switch to the Domains tab. 
 
 In the settings area above the domains table, click the load button (the button that has an arrow pointing downwards into a box). Choose a different set of domains, for instance, "nested.csv." As you play around with this section of NATuG, you can use the save button to save your own designs/your adjustments to the default designs.
 	
-\begin{figure}[h]
+\begin{figure}[h] \label{fig:domain-tinkering}
 	\caption{Changing up domain settings}
 	\centering
 	\begin{subfigure}{.5\textwidth}
@@ -95,7 +98,7 @@ In the settings area above the domains table, click the load button (the button 
 	\end{subfigure}
 \end{figure}
 	
-\subsection{Junction Creation}
+\subsection{Junction Creation} \label{sect:quickstart-junction-creation}
 \begin{figure}[h]
 	\centering
 	\caption{Creating cross-strand junctions}
@@ -125,7 +128,7 @@ In the Side View Plot---the main area of NATuG---locate two white triangles (whi
 \subsection{Nicks, Linkages, and Sequences}
 Here, you can begin to experiment with more advanced features of NATuG. You just experimented with creating junctions, but the Side View Plot mode that creates junctions (``juncter'' mode) is only one of many modes (though it's likely the mode you'll be using the most). To try out other modes, go to the top of the window, where you see a list of different buttons (``Informer,'' ``Juncter,'' ``Nicker,'' etc.), and click on different modes. Then left click on points within the main plot. Below is a list of (very) simplified descriptions of the different modes and how to get started using them.
 
-\begin{figure}[h]
+\begin{figure}[h] \label{fig:advanced-NATuG-features}
 	\caption{Advanced NATuG features}
 	\centering
 	\begin{subfigure}{.3\textwidth}
@@ -159,10 +162,9 @@ Here, you can begin to experiment with more advanced features of NATuG. You just
 
 NATuG’s interface consists of a main hub area, surrounded by two panels. There is a status bar at the bottom of NATuG, which provides helpful descriptions of what various buttons and input boxes do as you hover over them, and a file bar at the top of NATuG, which provides access to various cross-program functions.
 
-\begin{figure}[h]
+ \begin{figure}[h] \label{program-layout}
 	\centering
 	\caption{The overall layout of NATuG}
-	\label{program-layout}
 	\includegraphics[width=5in]{program-layout.png}
 \end{figure}
 
@@ -174,11 +176,12 @@ NATuG currently has one Panel: the ``config'' panel; however, in the future addi
 
 \begin{enumerate}
 	\item Panels are all undockable. By clicking twice on the top area of a panel, or by dragging the panel away from the main window, or by clicking the  button, one can make a panel become its own window. To redock, click on the top of the panel twice, or drag the panel back into the main window. 
+	
 	\item Panels are hideable. By clicking the "x" button in the top corner of a panel, or by going to the file menu, "view," and then the name of the panel you are trying to hide, you can hide the panel. To unhide a panel, go to the file menu, "view," and then the name of the panel you are trying to unhide. 
 \end{enumerate}
 
 \section{Config Panel} \label{section:config-panel}	
-The Config Panel contains most of the user input areas of NATuG. Within the panel are three primary Subpanels: ``Nucleic Acid,'' ``Domains,'' and ``Sequencing,'' and ``Snapshots,'' outlined in greater depth on the following pages.
+The Config Panel contains most of the user input areas of NATuG. Within the panel are three primary Subpanels: ``\textbf{Nucleic Acid},'' ``\textbf{Domains},'' and ``\textbf{Sequencing},'' and ``\textbf{Snapshots},'' outlined in greater depth on the following pages.
 
 To navigate between Subpanels of the config panel, simply click on one of the tabs on the right. Below are brief descriptions of the various tabs; however, each tab has a dedicated page as well.
 
@@ -191,26 +194,23 @@ To navigate between Subpanels of the config panel, simply click on one of the ta
 
 The Nucleic Acid Tab is where one can customize the geometrical settings of the nucleic acid that they are creating a nanotube for. They default to settings for a slight variation on B type DNA, and generally does not need to be changed. 
 
-\begin{figure}[h]
+\begin{figure}[H] \label{fig:domains-tab-activated}
 	\centering
 	\includegraphics[width=3in]{"domains-tab-activated.png"}
-	\label{fig:domains-tab-activated}
 \end{figure}
 
 The Domains Tab is where settings for the interior angles, strand switches, and the number of NEMids to generate are inputted. This section allows the user to actually define the shape of the nanotube.
 
-\begin{figure}[h]
+\begin{figure}[H] \label{fig:sequencing-activated}
 	\centering
 	\includegraphics[width=3in]{"sequencing-tab-activated.png"}
-	\label{fig:sequencing-activated}
 \end{figure}
 
 The Sequencing Tab is where the user can apply bulk sequence actions to all the strands, and export sequences to a spreadsheet for synthesis. This is generally one of the later steps in the nanotube design process.
 
-\begin{figure}[h]
+\begin{figure}[H] \label{fig:snapshots-activated}
 	\centering
 	\includegraphics[width=3in]{"snapshots-tab-activated.png"}
-	\label{fig:snapshots-activated}
 \end{figure}
 
 The Snapshots Tab is where version history can be found. It lets you rollback to previous program states with ease, and create ``snapshots'' of states at any time.
@@ -237,25 +237,22 @@ The Profile Manager allows you to load profiles, save profiles, and delete profi
 	\caption{Various Profile Actions}
 	
 	\centering
-	\begin{subfigure}{.3\textwidth}
+	\begin{subfigure}{.3\textwidth} \label{fig:load-profile-button}
 		\centering
 		\caption{The load profile button}
 		\includegraphics[width=1in]{load-profile-button.png}
-		\label{fig:load-profile-button}
 	\end{subfigure}%
 	~
-	\begin{subfigure}{.3\textwidth}
+	\begin{subfigure}{.3\textwidth} \label{fig:save-profile-button}
 		\centering
 		\caption{The save profile button}
 		\includegraphics[width=1in]{save-profile-button.png}
-		\label{fig:save-profile-button}
 	\end{subfigure}%
 	~
-	\begin{subfigure}{.3\textwidth}
+	\begin{subfigure}{.3\textwidth} \label{fig:delete-profile-button}
 		\centering
 		\caption{The delete profile button}
 		\includegraphics[width=1in]{delete-profile-button.png}
-		\label{fig:delete-profile-button}
 	\end{subfigure}
 \end{figure}
 
@@ -306,52 +303,44 @@ Below lies a list of all of the various Nucleic Acid settings that can be adjust
 
 \subsection{Domains Tab}
 
-\begin{figure}[h]
+\begin{figure}[h] \label{fig:domain-config-table-angles}
 	\centering
 	\caption{Domains Config Table}
 	
-	\begin{subfigure}{.45\linewidth}
-		\label{fig:domains-config-table-angles-tab}
+	\begin{subfigure}{.45\linewidth} \label{fig:domains-config-table-angles-tab}
 		\centering
 		\includegraphics[height=2.5in]{domain-config-table-angles.png}
 		\caption{Angles Tab of Domains Config Table}
 	\end{subfigure}%
 	~
-	\begin{subfigure}{.45\linewidth}
-		\label{fig:domains-config-table-counts-tab}
+	\begin{subfigure}{.45\linewidth} \label{fig:domains-config-table-counts-tab}
 		\centering
 		\includegraphics[height=2.5in]{domain-config-table-counts.png}
 		\caption{Counts Tab of Domains Config Table}
 	\end{subfigure}
-	
-	\label{fig:domain-config-table-angles}
 \end{figure}
 
 The Domains Tab is the area in which all the settings for each helical domain can be set. The angles between each domain are what determine what the ultimate shape of the nanostructure will be. The ``counts'' are what determine how many nucleosides each strand will be granted. Amongst many other design tools, NATuG allows for designing symmetrical structures, along with the ability to save and load designs. The tab consists of three components: the Settings Area (\ref{fig:domains-tab-settings-area}), Angles Area (\ref{fig:domains-tab-table-angles}), and Counts Area (\ref{fig:domains-tab-table-counts}), all explained in greater detail below.
 
 The Angles Area (\ref{fig:domains-tab-table-angles}) and Counts Area (\ref{fig:domains-tab-table-counts}) are placed within a tabbed area on the bottom part of the Domains Tab, such as not to overwhelm you with too many settings in the same table. Each row corresponds to the same domain, even though columns are bifurcated into two tabs.
 
-\begin{figure}
-	\label{fig:domains-tab-components}
+\begin{figure} \label{fig:domains-tab-components}
 	\caption{Domains Subpanel Components}
 	\centering
-	\begin{subfigure}{.45\linewidth}
+	\begin{subfigure}{.45\linewidth} \label{fig:domains-tab-settings-area}
 		\centering
-		\label{fig:domains-tab-settings-area}
 		\includegraphics[height=1.5in]{domains-tab-settings-area.png}
 		\caption{Settings area}
 	\end{subfigure}%
 	~
-	\begin{subfigure}{.3\linewidth}
+	\begin{subfigure}{.3\linewidth} \label{fig:domains-tab-table-angles}
 		\centering
-		\label{fig:domains-tab-table-angles}
 		\includegraphics[height=1.5in]{domains-tab-table-angles.png}
 		\caption{Angles area}
 	\end{subfigure}%
 	~
-	\begin{subfigure}{.3\linewidth}
+	\begin{subfigure}{.3\linewidth} \label{fig:domains-tab-table-counts}
 		\centering
-		\label{fig:domains-tab-table-counts}
 		\includegraphics[height=1.5in]{domains-tab-table-counts.png}
 		\caption{Counts area}
 	\end{subfigure}
@@ -454,11 +443,10 @@ Note that adjusting the left and right boxes can be particularly useful for crea
 
 \subsection{Sequencing}
 
-\begin{figure}[h]
+\begin{figure}[h] \label{fig:sequencing-tab}
 	\centering
 	\caption{Sequencing Tab}
 	\includegraphics[height=2.4in]{sequencing-tab.png}
-	\label{fig:sequencing-tab}
 \end{figure}
 
 This tab allows for bulk sequence operations, and for exporting sequences to a spreadsheet for synthesis. Because sequencing is such a critical part of NATuG, it has a section that goes into greater depth about how it works. It is also important to note that this is not the only place where sequences can be set. For more information about sequencing, consult section~\ref{sect:sequence-selector}.
@@ -485,11 +473,10 @@ The operation is what to do to the nucleosides within the scope.
 \section{Side View Plot}
 The Side View Plot is the heart of NATuG. It allows you to directly interact with strands that have been created as a result of user inputs set elsewhere. The plot can be broken into a few distinct parts that function together to allow for a high degree of interactivity. 
 
-\begin{figure}[h]
+\begin{figure}[h] \label{fig:short-side-view-overview}
 	\centering
 	\caption{The Side View Plot \& toolbar}
 	\includegraphics[width=4in]{short-side-view-overview.png}
-	\label{fig:short-side-view-overview}
 \end{figure}
 
 \subsection{Graphics}
@@ -506,37 +493,32 @@ Importantly, the plot consists of various artifacts, which represent physical nu
 
 \subsubsection{Points}
 
-\begin{figure}[h]
+\begin{figure}[h] \label{fig:side-view-plot-point-graphics}
 	\centering
 	\caption{Side View Plot Point Graphics}
-	\label{fig:side-view-plot-point-graphics}
 	
-	\begin{subfigure}{.22\linewidth}
+	\begin{subfigure}{.22\linewidth} \label{fig:up-triangle}
 		\centering
 		\includegraphics[width=.3in]{up-triangle.png}
 		\caption{Triangle Point}
-		\label{fig:up-triangle}
 	\end{subfigure}%
 	~
-	\begin{subfigure}{.22\linewidth}
+	\begin{subfigure}{.22\linewidth} \label{fig:up-chevron}
 		\centering
 		\includegraphics[width=.3in]{up-chevron.png}
 		\caption{Chevron Point}
-		\label{fig:up-chevron}
 	\end{subfigure}%
 	~
-	\begin{subfigure}{.22\linewidth}
+	\begin{subfigure}{.22\linewidth} \label{fig:base-symbol}
 		\centering
 		\includegraphics[width=.3in]{base-symbol.png}
 		\caption{Letter Point}
-		\label{fig:base-symbol}
 	\end{subfigure}%
 	~
-	\begin{subfigure}{.22\linewidth}
+	\begin{subfigure}{.22\linewidth} \label{fig:nondominant-point}
 		\centering
 		\includegraphics[width=.3in]{nondominant-point.png}
 		\caption{Circle Point}
-		\label{fig:nondominant-point}
 	\end{subfigure}
 \end{figure}
 
@@ -560,23 +542,20 @@ These symbols represent different artifacts, as follows...
 
 \subsubsection{Lines}
 
-\begin{figure}[h]
+\begin{figure}[h] \label{fig:side-view-plot-line-graphics}
 	\centering
 	\caption{Side View Plot Line Graphics}
-	\label{fig:side-view-plot-line-graphics}
-	
-	\begin{subfigure}{.4\linewidth}
+
+	\begin{subfigure}{.4\linewidth} \label{fig:strand-line}
 		\centering
 		\includegraphics[width=.3in]{strand-line.png}
 		\caption{Default Strand Line}
-		\label{fig:strand-line}
 	\end{subfigure}%
 	~
-	\begin{subfigure}{.3\linewidth}
+	\begin{subfigure}{.3\linewidth} \label{fig:interdomain-strand-line}
 		\centering
 		\includegraphics[width=.3in]{interdomain-strand-line.png}
 		\caption{Default Interdomain Strand Line}
-		\label{fig:interdomain-strand-line}
 	\end{subfigure}
 \end{figure}
 
@@ -621,18 +600,16 @@ The currently chosen mode dictates what left clicks on non-dot points in the Sid
 \begin{figure}[h]
 	\caption{Informer Dialogs}
 	\centering
-	\begin{subfigure}{.3\textheight}
+	\begin{subfigure}{.3\textheight} \label{fig:NEMid-informer}
 		\centering
 		\includegraphics[height=1.3in]{NEMid-informer.png}
 		\caption{NEMid Informer Dialog}
-		\label{fig:NEMid-informer}
 	\end{subfigure}%
 	~
-	\begin{subfigure}{.3\textheight}
+	\begin{subfigure}{.3\textheight} \label{fig:nucleoside-informer}
 		\centering
 		\includegraphics[height=1.3in]{nucleoside-informer.png}
 		\caption{Nucleoside Informer Dialog}
-		\label{fig:nucleoside-informer}
 	\end{subfigure}
 \end{figure}
 
@@ -667,36 +644,31 @@ Descriptions of the various properties that the NEMid Informer displays:
 
 \subsubsection{Juncter Mode} \label{sect:juncter}
 
-\begin{figure}[h]
+\begin{figure}[h] \label{fig:junction-sites}
 	\caption{Junction Sites and Junctable Regions}
-	\label{fig:junction-sites}
 	
-	\begin{subfigure}{.23\linewidth}
+	\begin{subfigure}{.23\linewidth} \label{fig:junctable-region}
 		\centering
 		\includegraphics[height=.6in]{junctable-region.png}
 		\caption{Two overlaping NEMids}
-		\label{fig:junctable-region}
 	\end{subfigure}%
 	~
-	\begin{subfigure}{.234\linewidth}
+	\begin{subfigure}{.234\linewidth} \label{fig:cross-screen-junctable}
 		\centering
 		\includegraphics[height=.6in]{cross-screen-junctable.png}
 		\caption{Two overlapping cross-screen NEMids}
-		\label{fig:cross-screen-junctable}
 	\end{subfigure}%
 	~
-	\begin{subfigure}{.23\linewidth}
+	\begin{subfigure}{.23\linewidth} \label{fig:active-junction-site}
 		\centering
 		\includegraphics[height=.6in]{active-junction.png}
 		\caption{An active junction site}
-		\label{fig:active-junction-site}
 	\end{subfigure}%
 	~
-	\begin{subfigure}{.23\linewidth}
+	\begin{subfigure}{.23\linewidth} \label{fig:active-cross-screen-junction}
 		\centering
 		\includegraphics[height=.6in]{cross-screen-junction-site.png}
 		\caption{An active cross-screen junction site}
-		\label{fig:active-cross-screen-junction}
 	\end{subfigure}
 
 \end{figure}
@@ -711,10 +683,9 @@ There are two ways to create a junction:
 
 \subsubsection{Nicker Mode}
 
-\begin{figure}[h]
+\begin{figure}[h] \label{fig:nick-examples}
 	\centering
 	\caption{Nick examples}
-	\label{fig:nick-examples}
 	
 	\begin{subfigure}{.4\linewidth}
 		\centering
@@ -742,11 +713,10 @@ Notes about nicking:
 
 \subsubsection{Linker Mode}
 
-\begin{figure}[h]
+\begin{figure}[h] \label{fig:linkage-editor}
 	\centering
 	\caption{The linkage editor}
 	\includegraphics[width=2.3in]{linkage-editor.png}
-	\label{fig:linkage-editor}
 \end{figure}
 
 The "Linker" mode allows you to connect the end of one strand to the beginning of another strand, and vice versa. 
@@ -754,30 +724,26 @@ The "Linker" mode allows you to connect the end of one strand to the beginning o
 \paragraph{Linkages}
 A linkage is a single-stranded region that connects two formerly distinct strands. In this single-stranded region nucleosides can be added, and bases for those nucleosides can be set. To customize a linkage click on the linkage, and the linkage editor should pop up. The Linkage Editor (see figure~\ref{fig:linkage-editor}) is a dialog that allows you to add nucleosides to the linkage, and to set the sequence of the items in the linkage. To increase or decrease the number of items within the linkage, simply increase the "Nucleosides in Linkage" spinbox, and click tab or enter. Note that the nucleosides in the linkage will show up in the regular strand config sequence editor, but this window only shows the sequence of the items within the linkage.
 
-\begin{figure}[h]
+\begin{figure}[h] \label{fig:linkage-creation-process}
 	\centering
 	\caption{Linkage creation process}
-	\label{fig:linkage-creation-process}
 	
-	\begin{subfigure}{.3\linewidth}
+	\begin{subfigure}{.3\linewidth} \label{fig:nick}
 		\centering
 		\includegraphics[height=.6in]{pre-linkage.png}
 		\caption{Two NEMids that can be linked together}
-		\label{fig:nick}
 	\end{subfigure}%
 	~
-	\begin{subfigure}{.3\linewidth}
+	\begin{subfigure}{.3\linewidth} \label{fig:nick}
 		\centering
 		\includegraphics[height=.6in]{pre-linkage-1.png}
 		\caption{A selected NEMid that can be linked to another NEMid}
-		\label{fig:nick}
 	\end{subfigure}%
 	~
-	\begin{subfigure}{.3\linewidth}
+	\begin{subfigure}{.3\linewidth} \label{fig:end-of-strand-nick}
 		\centering
 		\includegraphics[height=.6in]{linked.png}
 		\caption{A completed linkage. This is now one strand.}
-		\label{fig:end-of-strand-nick}
 	\end{subfigure}
 \end{figure}
 
@@ -793,11 +759,10 @@ To create a linkage:
 	\item Left click on the other NEMid that you would like to link it to. A linkage should be created upon releasing left click.
 \end{enumerate}
 
-\begin{wrapfigure}{r}{.3\linewidth}
+\begin{wrapfigure}{r}{.3\linewidth} \label{fig:highlighted-NEMid}
 	\centering
 	\includegraphics[width=1in]{highlighted-nemid.png}
 	\caption{"A highlighted NEMid}
-	\label{fig:highlighted-NEMid}
 \end{wrapfigure}
 
 \subsubsection{Highlighter Mode}
@@ -832,20 +797,17 @@ To begin the export process, click the ``Export plots'' button on the bottom rig
 
 The Top View Plot presents an overhead view of the nanostructure that is currently being created. It allows you to visualize the actual tube shape, and see the interior angles of all the domains. The Top View Plot is a panel, which means that it can be undocked, among other things. For information on panels, see~\ref{sect:panels}.
 
-\begin{figure}[h]
+\begin{figure}[h] \label{fig:top-view-plot-panel}
 	\centering
-	\label{fig:top-view-plot-panel}
 	\caption{Top View Plot Panel}
-	\begin{subfigure}{.45\linewidth}
+	\begin{subfigure}{.45\linewidth} \label{fig:top-view-plot-panel-1}
 		\centering
-		\label{fig:top-view-plot-panel-1}
 		\includegraphics[width=1.8in]{top-view-plot.png}
 		\caption{Top View Plot Example 1}
 	\end{subfigure}%
 	~
-	\begin{subfigure}{.45\linewidth}
+	\begin{subfigure}{.45\linewidth} \label{fig:top-view-plot-panel-2}
 		\centering
-		\label{fig:top-view-plot-panel-2}
 		\includegraphics[width=1.8in]{top-view-plot-2.png}
 		\caption{Top View Plot Example 2}
 	\end{subfigure}
@@ -868,10 +830,9 @@ Whereas a "helix" is specifically a strand that stays within one domain, a "stra
 
 \subsection{Selecting a Strand}
 
-\begin{figure}[h]
+\begin{figure}[h] \label{fig:selected-strand}
 	\centering
 	\includegraphics[height=1.4in]{selected-strand.png}
-	\label{fig:selected-strand}
 	\caption{A selected strand}
 \end{figure}
 
@@ -879,11 +840,10 @@ To select a strand, left click on the line between two NEMids/nucleosides within
 
 \subsection{Configuration}
 
-\begin{figure}[h]
+\begin{figure}[h] \label{fig:strand-config-dialog}
 	\centering
 	\includegraphics[width=3in]{strand-config.png}
 	\caption{Strand Config Dialog}
-	\label{fig:strand-config-dialog}
 \end{figure}
 
 The Strand Config Dialog is the place where you can configure strand styles, obtain additional information about a given strand, and set a strand's sequence. Below there is a detailed description of the three main parts of the strand config dialog:
@@ -913,14 +873,13 @@ Below lies a list of the various styles that can be customized, and the default 
 \subsection{Sequence Selector} \label{sect:sequence-selector}
 	The purpose of the Sequence Selector is to provide a user-friendly way to obtain a valid sequence for a given strand/portion of a strand. Generally, this will pop up when you click a button along the lines of "Choose a Sequence." To use the Sequence Selector, you can either choose to use the Bulk Sequence Input tab, or, if the length of the sequence you are being prompted to choose is under 1,000 bases, the Manual Input Tab. Once you have made your selection of sequence, click the "Load Sequence" button, or click the "Cancel" button to exit the Sequence Selector and cancel the sequence choosing operation. Below, more information about the two areas of the Sequence Selector can be found.
 
-\begin{figure}
+\begin{figure} \label{fig:sequence-dialog-manual-input}
 	\centering
 	\caption{Sequence Selector Dialog}
 	\begin{subfigure}{.5\textwidth}
 		\centering
 		\includegraphics[height=1.8in]{sequence-editor-manual-input.png}
 		\caption{Manual Input Tab}
-		\label{fig:sequence-dialog-manual-input}
 	\end{subfigure}%
 	~
 	\begin{subfigure}{.5\textwidth}
