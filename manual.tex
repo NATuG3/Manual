@@ -8,6 +8,7 @@
 \usepackage{subcaption}
 \usepackage{wrapfig}
 \usepackage{longtable}
+\usepackage{float}
 \usepackage[margin=1in]{geometry}
 \graphicspath{{resources/images}} % all graphics will come from the resources/images folder
 
@@ -183,10 +184,9 @@ To navigate between Subpanels of the config panel, simply click on one of the ta
 
 \textbf{Warning:} changing settings within the Config Panel will reset all current junctions, nicks, links, and highlights. Attempting to change settings when there exist any junctions, links, or highlights will result in a popup dialog that offers to save the current state of the Side View Plot and then refresh the plot, refresh the plot without saving, or cancel the attempted refresh. Thus, you generally want to configure the geometry of the structure before you interact with the strands.
 
-\begin{figure}[h]
+\begin{figure}[H] \label{fig:nucleic-acid-tab-activated}
 	\centering
 	\includegraphics[width=3in]{"nucleic-acid-tab-activated.png"}
-	\label{fig:nucleic-acid-tab-activated}
 \end{figure}
 
 The Nucleic Acid Tab is where one can customize the geometrical settings of the nucleic acid that they are creating a nanotube for. They default to settings for a slight variation on B type DNA, and generally does not need to be changed. 
