@@ -99,10 +99,9 @@ In the settings area above the domains table, click the load button (the button 
 \end{figure}
 	
 \subsection{Junction Creation} \label{sect:quickstart-junction-creation}
-\begin{figure}[h]
+\begin{figure}[h] \label{fig:creating-junctions}
 	\centering
 	\caption{Creating cross-strand junctions}
-	\label{fig:creating-junctions}
 	
 	\begin{subfigure}{.3\textwidth}
 		\centering
@@ -346,8 +345,7 @@ The Angles Area (\ref{fig:domains-tab-table-angles}) and Counts Area (\ref{fig:d
 	\end{subfigure}
 \end{figure}
 
-\subsubsection{Settings Area}
-\label{sect:domains-tab-settings-area}
+\subsubsection{Settings Area} \label{sect:domains-tab-settings-area}
 
 The settings area's primary purpose is to allow you to set the number of domains for your structure, however it also includes some critical parameters apropos symmetry.
 
@@ -390,8 +388,7 @@ Once you have made changes within this area, click the check icon, the top butto
 
 An additional tool worth noting here is the \textbf{rotate domains buttons}, shown in figure~\ref{fig:rotate-domains-arrows}. These buttons allow you to shift the settings of each domain in the template subunit upwards one, where the first domain's settings take the place of the last domain's settings, or the other way around. These buttons are particularly useful when dealing with non-symmetrical structures.
 
-\subsubsection{Angles Area}
-\label{sect:domains-tab-angles-area}
+\subsubsection{Angles Area} \label{sect:domains-tab-angles-area}
 
 The Angles Area of the Domains Subpanel is where you can enter information about the angle of helical domains in relation to other helical domains, along with controlling how the strands align with one another. Each row represents one of the helical domains within the \textbf{first} subunit, and the settings here are copied across all subunits.
 
@@ -422,8 +419,7 @@ The Angles Area of the Domains Subpanel is where you can enter information about
 	$\theta_i$ & number & The actual interior angle between this and the next domain. Equivalent to $\theta_m + \theta_s$, which is also equivalent to $\theta_c*m + \theta_s*s$ \\
 \end{longtable}
 
-\subsubsection{Counts Area}
-\label{sect:domains-tab-counts-area}
+\subsubsection{Counts Area} \label{sect:domains-tab-counts-area}
 
 The counts area lets you set the number of nucleosides of each strand. All strands are required to begin and end with a nucleoside, with NEMids interspaced between every nucleoside. Because of this, the number of NEMids in each strand is equal to the number of nucleosides in the strand, which can be set in this area of the Domains Tab minus one. 
 
@@ -484,12 +480,36 @@ Before diving into how to actually interact with the Side View Plot, it is impor
 
 Importantly, the plot consists of various artifacts, which represent physical nucleosides, or abstract areas between physical nucleosides, NEMids. Below lies further descriptions of what these artifacts appear as.
 
-\subsubsection{Axis Labels}
+\subsubsection{Axes}
+
+\paragraph{Axis units}
+The $x$ and $y$ axes have labels that indicate their dimension, but the gridlines represent more intuitive concepts.
 
 \begin{itemize}
-	\item The x-axis labels represent helical diameters, and thus also highlight specific domains. All points between $x=0$ and $x=1$ are in domain\#1, those between $x=1$ and $x=2$ are in domain\#2, and so forth.
+	\item The x-axis labels represent helical diameters, and thus also define sections between domains. All points between $x=0$ and $x=1$ are in domain\#1, those between $x=1$ and $x=2$ are in domain\#2, and so forth.
 	\item The y-axis labels represent the actual vertical height, and the gridlines represent each complete helical twist.
 \end{itemize}
+
+\paragraph{Gridlines}
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{.4\linewidth}
+		\centering
+		\caption{Unstable join example (0 junctions)}
+		\includegraphics[height=2in]{unstable-joint-example.png}
+	\end{subfigure}~
+	%
+	\begin{subfigure}{.4\linewidth}
+		\centering
+		\caption{Stable joint example (2 junctions)}
+		\includegraphics[height=2in]{stable-joint-example.png}
+	\end{subfigure}
+\end{figure}
+
+The \textbf{horizontal} gridlines lie beginning at $z=0$ and repeat upwards up until the top of the highest point (nucleoside/NEMid). The gridlines themselves are all gray and identical in style.
+
+The \textbf{vertical} gridlines lie beginning at $x=0$ and repeat up until the right of the last helical domain. For each helical joint, including the last one, if there are less than two active junctions the line will appear slightly thicker and red so as to indicate that the joint will be unstable. To make it return to a benign gray, make at least two junctions along the helical joint.
 
 \subsubsection{Points}
 
@@ -621,11 +641,17 @@ The informer mode is for obtaining additional information about given points. Wh
 Descriptions of the various properties that the Nucleoside Informer displays:
 \begin{enumerate}
 	\item \textbf{X Coordinate:} The x coordinate of the nucleoside. \label{item:nucleoside-informer-x-coord}
+	
 	\item \textbf{Z Coordinate:} The z coordinate of the nucleoside. \label{item:nucleoside-informer-z-coord}
+	
 	\item \textbf{Angle:} The angle of the nucleoside. The line of tangency between the previous domain and this domain marks the zero degree mark. This is automatically moduloed by 360. \label{item:nucleoside-informer-angle}
+	
 	\item \textbf{Strand:} The index of the nucleoside within its parent strand, and the index of the parent strand within the list of all strands. Indexes begin at \#1. This is the nucleoside index, not the item index, so even though it is true that strands progress nucleoside, NEMid, nucleoside, etc., this index only takes into account nucleosides. \label{item:nucleoside-informer-strand}
+	
 	\item \textbf{Original Domain:} The domain that this nucleoside belongs to. \label{item:nucleoside-informer-domain}
+	
 	\item \textbf{Base:} The base that this nucleoside is currently set to. If the nucleoside does not have a base set, this box will read "Unset Base."
+	
 	\item \textbf{Direction:} The direction of the strand. The darker box is the direction that the strand is going in.  \label{item:nucleoside-informer-direction}
 \end{enumerate}
 
@@ -633,12 +659,19 @@ Descriptions of the various properties that the Nucleoside Informer displays:
 Descriptions of the various properties that the NEMid Informer displays:
 \begin{enumerate}
 	\item \textbf{X Coordinate:} Same as Nucleoside Informer \#\ref{item:nucleoside-informer-x-coord}
+	
 	\item \textbf{Z Coordinate:} Same as Nucleoside Informer \#\ref{item:nucleoside-informer-z-coord}
+	
 	\item \textbf{Angle:} Same as Nucleoside Informer \#\ref{item:nucleoside-informer-angle}
+	
 	\item \textbf{Strand:} Same as Nucleoside Informer \#\ref{item:nucleoside-informer-strand}
+	
 	\item \textbf{Original Domain:} Same as Nucleoside Informer \#\ref{item:nucleoside-informer-domain}
-	\item \textbf{Could Be Junction:} Whether this NEMid could be conjuncted with another NEMid. If this is set to true then clicking on this NEMid in Juncter Mode (\ref{sect:juncter}) will be allowed, otherwise an error will be displayed.
+	
+	\item \textbf{Could Be Junction:} Whether this NEMid could be conjuncted with another NEMid. If this is set to true then clicking on this NEMid in Juncter Mode (\ref{sect:juncter}) will be allowed, otherwise an error will be displayed
+	
 	\item \textbf{Is Active Junction:} Whether this NEMid is currently conjuncted with another NEMid. 
+	
 	\item \textbf{Direction:} Same as Nucleoside Informer \#\ref{item:nucleoside-informer-direction}
 \end{enumerate}
 
@@ -755,7 +788,9 @@ To create a linkage:
 		\item One NEMid is at the 5' end of its strand and the other NEMid is at the 3' end of its strand.
 		\item Both strands consist of $>$1 NEMids.
 	\end{enumerate}
+
 	\item Left click on one of the NEMids that you would like to link with the other NEMid. The order in which you click the NEMids does not matter. After clicking on a NEMid in linker mode, the NEMid should turn blue and grow larger. This indicates that it is selected.
+	
 	\item Left click on the other NEMid that you would like to link it to. A linkage should be created upon releasing left click.
 \end{enumerate}
 
@@ -778,20 +813,9 @@ Notes about highlighting:
 		\item Create a nick to split the strand in two, or create junction
 		\item Click the "Update Graphs" button to refresh the plots
 	\end{itemize}
+
 	\item At this time NATuG's highlighting is uncustomizable, so all higlighted items will be large and yellow versions of their past selves.
 \end{itemize}
-
-\subsection{Exporting}
-
-One important feature of NATuG is the ability to export the side view plot as a high resolution vector or image file.
-
-\begin{figure}[h] \label{export-plots-button}
-	\centering
-	\caption{Export plots button}
-	\includegraphics[width=1in]{export-plots-button.png}
-\end{figure}
-
-To begin the export process, click the ``Export plots'' button on the bottom right of the Config Panel. 
 
 \section{Top View Plot}
 
@@ -824,9 +848,83 @@ For the most part, interacting with the Top View Plot is the same as interacting
 	\item Clicking on a number (not a circle, but rather on a number) will navigate the Side View Plot to the specific domain that was clicked on. Clicking on the same number a second time will restore the full view of the plot.
 \end{itemize}
 
+\section{Exporting}
+
+\begin{figure} \label{export-plots-button}
+	\centering
+	\caption{Export plots button}
+	\includegraphics[width=1in]{export-plots-button.png}
+\end{figure}
+
+One important feature of NATuG is the ability to export the side view plot as a high resolution vector or image file. These images are of a high enough fidelity to be used for scholarly literature and also allow for a greater level of image customization.
+
+To begin the export process, click the ``Export plots'' button on the bottom right of the Config Panel. After you have done so, a Plot Exporter dialog will pop up that is fixed at 85\% of your screen's width and 80\% of your screen's height.
+
+The Plot Exporter dialog has two primary sections. On the left, there is a tabbed area with two tabs for each of NATuG's two primary plots: a Side View tab and a Top View tab. On the right side there is a configuration panel that allows you to customize the currently displayed plot. Changes made within the settings area are saved as you switch back and forth between tabs.
+
+\begin{figure} \label{fig:plot-export-dialog}
+	\centering
+	\caption{Plot Export Dialog}
+	\includegraphics[width=4in]{plot-export-dialog.png}
+\end{figure}
+
+\subsection{Export Settings}
+
+On the right side of the Plot Exporter dialog you can configure how the plots generate. Settings like the title displayed above the plot, the size of the various artifacts, and the padding around the plot can be configured easily. Below is a description of the various properties that can be configured for the Side View Plot and the Top View Plot.
+
+In the \textbf{primary settings} export options area the export filetype can be set within a dropdown to be one of the following:
+
+\begin{itemize}
+	\item \textbf{SVG}: This is the recommended filetype, and is saves the plot as a vector graphic. That means that the image is of infinite resolution, and can be edited in vector editing programs like Adobe Illustrator later.
+	\item \textbf{PNG}: A PNG image file.
+	\item \textbf{JPG}: A JPG image file.  
+\end{itemize}
+
+The Side View Plot and Top View Plot both have similarly categorized settings, but the options themselves differ. The following subsections explain how the different settings affect the way that the plots are generated.
+
+\subsubsection{Side View Plot Settings}
+
+For the Side View Plot, there's different types of controls that you have over the plot:
+
+\begin{itemize}
+	\item \textbf{Primary Settings}: 
+	\begin{itemize}
+		\item \textbf{File Name}: The name of the exported file.
+		\item \textbf{Plot Title}: The title to place at the top of the plot contents. If blank no plot title is plotted.
+	\end{itemize}
+	
+	\item \textbf{Plot Options}: General properties apropos how to plot the artifacts, and which to plot. This includes:
+	\begin{itemize}
+		\item \textbf{Nucleosides \& NEMids}: Whether to plot nucleosides or NEMids. Plots them if checked, does not if they are unchecked.
+		
+		\item \textbf{Unstable Helix Joints}: Whether to make the vertical gridlines between domains slightly wider and red if there are less than two active junctions along the helix joint. If this is checked the gridline is altered, otherwise it is gray like the others.
+		
+		\item \textbf{Padding}: When autoranged (the small ``A'' autorange button on the bottom left of the plot is clicked and the plot contents then automatically are rescaled to fit the plot), this is the amount of padding to place around the plot. When a manual range on the plot is chosen this property does not have any effect.
+	\end{itemize}
+	
+	\item \textbf{Modifiers}: Multipliers for the size of various plot artifacts. Artifacts' default sizes (or widths, when applicable) are multiplied by these values.
+\end{itemize}
+
+\subsubsection{Top View Plot Settings}
+
+\begin{itemize}
+	\item \textbf{Primary Settings}: 
+	\begin{itemize}
+		\item \textbf{File Name}: The name of the exported file. If this is the same as that of the Side View Plot then the Top View Plot export will overwrite the Side View Plot's and only one file will end up being created.
+		\item \textbf{Plot Title}: The title to place at the top of the plot contents, like that of the Side View Plot. Likewise, if blank no plot title is plotted.
+	\end{itemize}
+	
+	\item \textbf{Plot Options}: General properties apropos how to plot the artifacts, and which to plot, similar in essence of those of the Side View Plot's. These include:
+	\begin{itemize}
+		\item \textbf{Rotation}: How much to rotate the plot contents, in degrees.
+		\item \textbf{Stroke}: The width of the stroke of the circles.
+		\item \textbf{Padding}: The same as the Side View Plot's padding.
+	\end{itemize}
+\end{itemize}
+
 \section{Strands}
 
-Whereas a "helix" is specifically a strand that stays within one domain, a "strand" can traverse many domains. When a strand crosses through many domains, it weaves the nanotube together. But, equally important to choosing where the strand goes is determining the base sequence. And, being able to choose styles to represent strands in publications is also critical. This section covers how to customize the properties of a strand.
+Whereas a ``helix'' is specifically a strand that stays within one domain, a ``strand'' can traverse many domains. When a strand crosses through many domains, it weaves the nanotube together. But, equally important to choosing where the strand goes is determining the base sequence. And, being able to choose styles to represent strands in publications is also critical. This section covers how to customize the properties of a strand.
 
 \subsection{Selecting a Strand}
 
@@ -859,19 +957,19 @@ The information area of the Strand Config Dialog provides the following informat
 	\item \textbf{Closed:} Whether the strand is a closed loop strand.
 	\item \textbf{Empty:} Whether the strand has no items in it. In general, this will be false.
 \end{itemize} 
-In addition, the strand's index in regards to all the other strands (its "id") can be found as the title of the window (see the top of figure~\ref{fig:strand-line})
+In addition, the strand's index in regards to all the other strands (its ``id'') can be found as the title of the window (see the top of figure~\ref{fig:strand-line})
 
 \subparagraph{Styling}
-The style area of the Strand Config Dialog lets you customize styles of the strand. The styles update in real time, with the exception of the "Automatic" style checkboxes. The "Auto" checkboxes next to the different strand styles tell NATuG whether or not to overright the user-set strand style when refreshing/recoloring the plot. If you want to reset a style of a strand back to the default, select the "Auto" checkbox for the style, and then in the file menu choose "View," and "Restyle Strands."
+The style area of the Strand Config Dialog lets you customize styles of the strand. The styles update in real time, with the exception of the ``Automatic'' style checkboxes. The ``Auto'' checkboxes next to the different strand styles tell NATuG whether or not to overright the user-set strand style when refreshing/recoloring the plot. If you want to reset a style of a strand back to the default, select the ``Auto'' checkbox for the style, and then in the file menu choose ``View,'' and ``Restyle Strands.''
 
 Below lies a list of the various styles that can be customized, and the default settings of the given styles.
 \begin{itemize}
 	\item \textbf{Thickness:} The width of the strand. This is a handlebar that represents the width of the strand in pixels. The very left of the bar represents 1 pixel of thickness, and the very right of the bar represents 50 pixels of thickness. By default, strands that stay in their own domain are 2 pixels thick, and strands that traverse multiple domains are 9.5 pixels thick.
-	\item \textbf{Color:} The color of the strand. The "Color Chooser" button creates a Color Chooser Dialog that allows you to select the color of your choosing. Within the dialog, you can enter parameters for your color in RGB/CMYK, choose a screen color, or choose from a preset. By default, strands that stay in their own domain are either light or dark gray, and strands that traverse multiple domains are automatically assigned colors as to keep them distinct from other strands that traverse multiple domains.
+	\item \textbf{Color:} The color of the strand. The ``Color Chooser'' button creates a Color Chooser Dialog that allows you to select the color of your choosing. Within the dialog, you can enter parameters for your color in RGB/CMYK, choose a screen color, or choose from a preset. By default, strands that stay in their own domain are either light or dark gray, and strands that traverse multiple domains are automatically assigned colors as to keep them distinct from other strands that traverse multiple domains.
 \end{itemize}
 
 \subsection{Sequence Selector} \label{sect:sequence-selector}
-	The purpose of the Sequence Selector is to provide a user-friendly way to obtain a valid sequence for a given strand/portion of a strand. Generally, this will pop up when you click a button along the lines of "Choose a Sequence." To use the Sequence Selector, you can either choose to use the Bulk Sequence Input tab, or, if the length of the sequence you are being prompted to choose is under 1,000 bases, the Manual Input Tab. Once you have made your selection of sequence, click the "Load Sequence" button, or click the "Cancel" button to exit the Sequence Selector and cancel the sequence choosing operation. Below, more information about the two areas of the Sequence Selector can be found.
+	The purpose of the Sequence Selector is to provide a user-friendly way to obtain a valid sequence for a given strand/portion of a strand. Generally, this will pop up when you click a button along the lines of ``Choose a Sequence.'' To use the Sequence Selector, you can either choose to use the Bulk Sequence Input tab, or, if the length of the sequence you are being prompted to choose is under 1,000 bases, the Manual Input Tab. Once you have made your selection of sequence, click the ``Load Sequence'' button, or click the ``Cancel'' button to exit the Sequence Selector and cancel the sequence choosing operation. Below, more information about the two areas of the Sequence Selector can be found.
 
 \begin{figure} \label{fig:sequence-dialog-manual-input}
 	\centering
@@ -896,7 +994,7 @@ The Manual Input Tab of the Sequence Selector is like a text editor for a DNA se
 \paragraph{Sequence Entry Area}
 The Sequence Entry Area is a horizontally scrollable area that showcases all of the bases currently chosen as editable text boxes. Each white rounded box, also called an Entry Box, represents a single nitrogenous base. The box above each Entry Box is the index of that base. The box below each Entry Box is the complementary base. NATuG uses Watson-Crick base pairing, so the complement of A is T, the complement of T is A, the complement of G is C, the complement of C is G, and the complement of None is None.
 
-When you are using the Sequence Entry Area, you can type into one box at a time either the letter "A," "G," "C," or "T," or you can click the delete key. What you type will automatically be capitalized, and after you enter the letter of a base you will automatically be shifted to the next Entry Box to the right, or, if you enter a base into the last box, you will be shifted to the first Entry Box. As you enter bases into the various Entry Boxes, the Sequence Entry Area will automatically scroll to keep the currently selected box in view.
+When you are using the Sequence Entry Area, you can type into one box at a time either the letter ``A,'' ``G,'' ``C,'' or ``T,'' or you can click the delete key. What you type will automatically be capitalized, and after you enter the letter of a base you will automatically be shifted to the next Entry Box to the right, or, if you enter a base into the last box, you will be shifted to the first Entry Box. As you enter bases into the various Entry Boxes, the Sequence Entry Area will automatically scroll to keep the currently selected box in view.
 	
 \paragraph{Sequence Display Area}
 The Sequence Display Area is a larger area that displays the entire current sequence. This area is read only, and highlights the currently selected Entry Box of the Sequence Entry Area. You can select and copy the text of this box, but you cannot edit this box.
