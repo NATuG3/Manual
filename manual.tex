@@ -752,10 +752,10 @@ Notes about nicking:
 	\includegraphics[width=2.3in]{linkage-editor.png}
 \end{figure}
 
-The "Linker" mode allows you to connect the end of one strand to the beginning of another strand, and vice versa. 
+The ``Linker'' mode allows you to connect the end of one strand to the beginning of another strand, and vice versa.
 
 \paragraph{Linkages}
-A linkage is a single-stranded region that connects two formerly distinct strands. In this single-stranded region nucleosides can be added, and bases for those nucleosides can be set. To customize a linkage click on the linkage, and the linkage editor should pop up. The Linkage Editor (see figure~\ref{fig:linkage-editor}) is a dialog that allows you to add nucleosides to the linkage, and to set the sequence of the items in the linkage. To increase or decrease the number of items within the linkage, simply increase the "Nucleosides in Linkage" spinbox, and click tab or enter. Note that the nucleosides in the linkage will show up in the regular strand config sequence editor, but this window only shows the sequence of the items within the linkage.
+A linkage is a single-stranded region that connects two formerly distinct strands. In this single-stranded region nucleosides can be added, and bases for those nucleosides can be set. To customize a linkage click on the linkage, and the linkage editor should pop up. The Linkage Editor (see figure~\ref{fig:linkage-editor}) is a dialog that allows you to add nucleosides to the linkage, and to set the sequence of the items in the linkage. To increase or decrease the number of items within the linkage, simply increase the ``Nucleosides in Linkage'' spinbox, and click tab or enter to cause the update to take effect. Note that the nucleosides in the linkage will show up in the regular strand config sequence editor, but this window only shows the sequence of the items within the linkage. To remove a linkage, you'll need to open this same dialog and use the \textbf{remove linkage} button at the bottom.
 
 \begin{figure}[h] \label{fig:linkage-creation-process}
 	\centering
@@ -784,7 +784,7 @@ To create a linkage:
 \begin{enumerate}
 	\item Locate two NEMids that can be made into a linkage. Consult the following list of prerequisites for determining if two NEMids can be linked together---if the following conditions are not met a warning will be displayed.
 	\begin{enumerate}
-		\item Both NEMids must be endpoints of their respective strands. This means the second to last or second item in their strands (with the nucleoside that follows them being the very last or very first item).
+		\item Both NEMids must be endpoints of their respective strands. This means the second to last or second item in their strands (with the nucleoside that follows them being the very last or very first item). Recall that you can split up strands with nicks so as to `create' endpoints.
 		\item One NEMid is at the 5' end of its strand and the other NEMid is at the 3' end of its strand.
 		\item Both strands consist of $>$1 NEMids.
 	\end{enumerate}
@@ -896,13 +896,13 @@ To begin the export process, click the ``Export plots'' button on the bottom rig
 
 The Plot Exporter dialog has two primary sections. On the left, there is a tabbed area with two tabs for each of NATuG's two primary plots: a Side View tab and a Top View tab. On the right side there is a configuration panel that allows you to customize the currently displayed plot. Changes made within the settings area are saved as you switch back and forth between tabs.
 
-\begin{figure} \label{fig:plot-export-dialog}
+\subsection{Export Settings}
+
+\begin{figure}[H] \label{fig:plot-export-dialog}
 	\centering
 	\caption{Plot Export Dialog}
 	\includegraphics[width=4in]{plot-export-dialog.png}
 \end{figure}
-
-\subsection{Export Settings}
 
 On the right side of the Plot Exporter dialog you can configure how the plots generate. Settings like the title displayed above the plot, the size of the various artifacts, and the padding around the plot can be configured easily. Below is a description of the various properties that can be configured for the Side View Plot and the Top View Plot.
 
@@ -1004,6 +1004,8 @@ Below lies a list of the various styles that can be customized, and the default 
 
 \subsection{Sequence Selector} \label{sect:sequence-selector}
 	The purpose of the Sequence Selector is to provide a user-friendly way to obtain a valid sequence for a given strand/portion of a strand. Generally, this will pop up when you click a button along the lines of ``Choose a Sequence.'' To use the Sequence Selector, you can either choose to use the Bulk Sequence Input tab, or, if the length of the sequence you are being prompted to choose is under 1,000 bases, the Manual Input Tab. Once you have made your selection of sequence, click the ``Load Sequence'' button, or click the ``Cancel'' button to exit the Sequence Selector and cancel the sequence choosing operation. Below, more information about the two areas of the Sequence Selector can be found.
+	
+	\textbf{Note:} When you set a sequence, whether through this selector dialog or elsewhere, complementary bases will automatically be set for you.
 
 \begin{figure} \label{fig:sequence-dialog-manual-input}
 	\centering
@@ -1026,11 +1028,22 @@ Below lies a list of the various styles that can be customized, and the default 
 The Manual Input Tab of the Sequence Selector is like a text editor for a DNA sequence, and makes entering a sequence manually super-simple and convenient. Because of how the Manual Input Tab is implemented, it becomes particularly slow after displaying more than 1,000 bases, so, when more than 1,000 bases need to be set you must use the Bulk Input Tab. The Manual Input tab consists of two main areas, the bottom Sequence Entry Area and the top Sequence Display Area.
 
 \paragraph{Sequence Entry Area}
-The Sequence Entry Area is a horizontally scrollable area that showcases all of the bases currently chosen as editable text boxes. Each white rounded box, also called an Entry Box, represents a single nitrogenous base. The box above each Entry Box is the index of that base. The box below each Entry Box is the complementary base. NATuG uses Watson-Crick base pairing, so the complement of A is T, the complement of T is A, the complement of G is C, the complement of C is G, and the complement of None is None.
+The Sequence Entry Area is a horizontally scroll-able area that showcases all of the bases currently chosen as editable text boxes. Each white rounded box, also called an Entry Box, represents a single nitrogenous base. The box above each Entry Box is the index of that base. The box below each Entry Box is the complementary base. NATuG uses Watson-Crick base pairing, so the complement of A is T, the complement of T is A, the complement of G is C, the complement of C is G, and the complement of None is None.
 
 When you are using the Sequence Entry Area, you can type into one box at a time either the letter ``A,'' ``G,'' ``C,'' or ``T,'' or you can click the delete key. What you type will automatically be capitalized, and after you enter the letter of a base you will automatically be shifted to the next Entry Box to the right, or, if you enter a base into the last box, you will be shifted to the first Entry Box. As you enter bases into the various Entry Boxes, the Sequence Entry Area will automatically scroll to keep the currently selected box in view.
 	
 \paragraph{Sequence Display Area}
 The Sequence Display Area is a larger area that displays the entire current sequence. This area is read only, and highlights the currently selected Entry Box of the Sequence Entry Area. You can select and copy the text of this box, but you cannot edit this box.
+
+\subsubsection{Bulk Input Tab}
+The Bulk Input Tab of the Sequence Selector is a place to load in or generate a large number of bases easily. Within the Bulk Input Tab there is only a \textbf{display area}, wherein there are currently two  ways to populate it with bases:
+
+\begin{enumerate}
+	\item Import a \texttt{.txt} file full of bases. The file must only contain ``A,'' ``G,'' ``C,'' or ``T''s, along with linebreaks and spaces if desired (but whitespace has no effect on the load-in process). The example \texttt{m13mp18} virus strand sequence ships with NATuG as an example, and, as you will come across with your own viral sequences too, it is probably going to included more bases than the length of your longest strand. When you attempt to load it a warning will be displayed, which will allow you to apply the bases from the start of the file up until the strand you are setting a sequence for has been filled.
+	
+	\item Generate a random string of ``A,'' ``G,'' ``C,'' and ``T''s that is of the length of the strand.
+\end{enumerate}
+
+Once you've imported a longer sequence with the bulk input tab, if it is under 1,000 bases you can always click ``load sequence,'' and go back to the Sequence Selector's Manual Input Tab to fine-tune.
 
 \end{document}
