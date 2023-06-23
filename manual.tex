@@ -817,6 +817,36 @@ Notes about highlighting:
 	\item At this time NATuG's highlighting is uncustomizable, so all higlighted items will be large and yellow versions of their past selves.
 \end{itemize}
 
+\subsection{Repetition}
+
+\begin{figure}
+	\centering
+	\caption{Enabling the Action Repeater}
+	\begin{subfigure}{.3\linewidth}
+		\centering
+		\includegraphics[width=1.9in]{action-repeater-disabled.png}
+		\caption{Action repeater disabled}
+	\end{subfigure}%
+	~
+	\begin{subfigure}{.4\linewidth}
+		\centering
+		\includegraphics[width=2.5in]{action-repeater-enablement.png}
+		\caption{Action Repeater Dialog}
+	\end{subfigure}%
+	~
+	\begin{subfigure}{.3\linewidth}
+		\centering
+		\includegraphics[width=1.9in]{action-repeater-enabled.png}
+		\caption{Action repeater enabled}
+	\end{subfigure}
+\end{figure}
+
+Often for larger structures, especially ones where helices contain many bases, you will find yourself tediously making junctions all the way up the helices every where and there. Thankfully, NATuG has a tool to streamline the process. With the Action Repeater, you can automatically repeat an action, such as creating junctions, along a \textbf{helix}, with the frequency of your choice. It is important to realize that the action repeater does not repeat actions across strands, but rather traverses up/down \textbf{helices}.
+
+To enable the Action Repeater, click on the large, red button that says ``Action Repetition Off,'' at the top of the screen. Clicking on it should spawn an Action Repetition Dialog, allowing you to configure and then enable the tool. The Action Repeater works for any mode, such as Nicking and Juncting, but if it fails to perform an action at any given point along the helix it is repeating over, it will suppress the error. Within the Action Repeater Dialog there are various settings you can configure, which should be mostly intuitive. You can choose to repeat the action every certain amount of NEMids, or every certain multiple of $B$ (a configurable setting in the Nucleic Acid Profile) NEMids. You can also specify how far up the helix to go in those intervals, or can choose to continue to the end of the strand. Choosing the bidirectional checkbox will make it so that the action repeats up and down the strand (whereas normally it only repeats in the direction of the point you click, up until the end of the strand).
+
+After enabling the Action Repeater, the large red button will turn green and display the current repetition settings. To disable the Action Repeater, simply click the large green button displaying the settings.
+
 \section{Top View Plot}
 
 The Top View Plot presents an overhead view of the nanostructure that is currently being created. It allows you to visualize the actual tube shape, and see the interior angles of all the domains. The Top View Plot is a panel, which means that it can be undocked, among other things. For information on panels, see~\ref{sect:panels}.
@@ -847,6 +877,10 @@ For the most part, interacting with the Top View Plot is the same as interacting
 	\item The Top View Plot is rotatable. To rotate the top view plot, drag the handlebar beneath the plot to the right. The left edge of the bar represents a $0^{\circ}$ rotation, and the right edge of the bar represents a $360^{\circ}$ rotation. The plot is rotated after coordinates for all of the domains are computed, and the pivot point of rotation is the middle point of all the domains.
 	\item Clicking on a number (not a circle, but rather on a number) will navigate the Side View Plot to the specific domain that was clicked on. Clicking on the same number a second time will restore the full view of the plot.
 \end{itemize}
+
+\section{Saving}
+
+A vital feature of NATuG is the ability to save and load the current program state at any time. NATuG makes this extremely simple: either use \texttt{Control+S}, or go to file, save. Your save will take the form of a \texttt{.natug} file, which contains the entire program state, with the exception of current snapshots, which are their own save files and are not packed into the save. Technically speaking, NATuG save files are \texttt{zip} formatted packages, so, while not documented here, all program contents can be found in neat \texttt{.csv}s within the archive.
 
 \section{Exporting}
 
