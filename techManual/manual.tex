@@ -1,0 +1,217 @@
+\documentclass[titlepage]{article}
+
+\title{NATuG Technical Manual}
+\author{Wolf S. Mermelstein and William B. Sherman}
+
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{subcaption}
+\usepackage[margin=1in]{geometry}
+\graphicspath{{resources/images}} % all graphics will come from the resources/images folder
+
+\begin{document}
+	\maketitle
+	\tableofcontents 
+	\newpage
+	
+	\section{Navigating the Codebase}
+	
+	\subsection{Comments}
+	
+	NATuG's codebase implements Python's two main types of comments: inline comments and docstrings.
+	
+	\paragraph{Docstrings}
+	In Python docstrings are a type of specially formatted multi-line string that comes after class and function definitions to provide additional information about the schema of the structure. NATuG implements Google formatted docstrings for \textbf{ALL} functions and classes. All docstrings should be fairly straightforward, and don't need to go too deeply into depth about \textit{how} things work; rather, they should focus more on how to use things and what things do.
+	
+	\paragraph{Comments}
+	NATuG utilizes inline comments less so than it does docstrings, and wherever appropriate. Comments should be used to explain how things work or what things do. Comments should \textbf{not} be used for book-keeping, such as recording changes, insertions, or TO-DOs.
+	
+	\section{NATuG's Modules}
+	To properly understand how NATuG functions, it is important to understand what parts comprise NATuG, and how they combine to form the overall program.
+	
+	In the parent directory of NATuG there exist a few different folders, many of which are modules (a Python module is a folder with a \texttt{\_\_init\_\_.py} file in it), which each serve an important, distinct purpose. Within some of these parent modules live submodules, which contain files that relate to the folder that they are in, and so forth.
+	
+	The following subsections provide descriptions of all the main folders of NATuG, including modules and non-module folders, which should help in subsequent explanation of how they all piece together.
+	
+	\subsection{Constants}
+	The constants module is the most simple module to understand. In this module lies program-wide constant variables. For example, the number \texttt{0} represents \texttt{UP}-ness. In order to prevent code from becoming overly opaque, however, we \texttt{import DOWN from constants.directions} and then use the term \texttt{DOWN} in the code. It's just an alias.
+	
+	\subsection{Runner}
+	This is heart of the program. \texttt{runner.py} within the runner module defines a class that manages the overall, entire program state. When NATuG is run a single \texttt{Runner} object is instantiated, and no others should ever be created. This instance has a reference in the \texttt{launcher.py} main file, but that reference shouldn't ever actually get used, except for the launcher to call its \texttt{setup()} method, which prepares it to then have its \texttt{boot()} function called by the launcher too. References to the runner are available elsewhere in the application, but they are distributed to components by the runner itself. 
+	
+	The runner class can be thought of as a container that holds eclectic instances of objects that are needed for the app to work. It contains things like the \texttt{QApplication}, which is QT's ultimate parent widget, and a flag that indicates whether the program has finished booting. Additionally, it contains a \texttt{Filehandler} object and possesses a \texttt{.snapshot()}, \texttt{.save()}, and similar methods, which lets you save the entire state of the program, which makes sense given that it has access to all parts of the current program state. 
+	
+	\subsubsection{Managers} \label{sect:managers}
+	The most important part of the runner is its \texttt{.managers} attribute, which contain compartmentalized sub-containers for storing \textbf{instances} of the various data structures that represent nanotube (and configuration) data. The definitions of the managers can be found within the \texttt{runner/managers} folder, and each has a fairly similar schema. Most of the managers when initialized call an internal \texttt{setup()} function, which loads the last program's saved state or some default from a file to the \texttt{.current} attribute of the manager, and then registers a \texttt{dump()} to be run at program exit using the \texttt{atexit} python library. 
+	
+	The relationship between runners and managers is a bit complex, so let's take a look at an example. The \texttt{ui} module, which will be discussed later, has a \texttt{config} submodule, which has various tabs, like the \texttt{domains} tab. The domains tab lets the user change properties of the domains of the nanotube, such as the internal angles of given domains in a given subunit. The table that lets you set the counts, angles, and other properties of domains. From the user's perspective, their changes persist so long as the program state persists. If they switch tabs and return to the domains tab in the config panel, they expect their settings to remain unchanged. When they update a given domain's interior angle, they expect the plots to update accordingly, and the new angle to take place of the old one in the current program state.
+	
+	But of course, the table that \textit{displays} the domain setting that they are planning on changing is just a customized widget that inherits PyQt \texttt{QWidget} and contains a \texttt{QTabWidget} that's filled with \texttt{QSpinBox} widgets. It's a UI Widget, and while the various subwidgets have states storing their own current values independently, the data is only meaningful when grouped together in a Python \texttt{object} designed to properly represent the information that is being displayed. To this end, the domain angle editing table, for the sake of this example, has a \texttt{fetch\_domains()} and \texttt{dump\_domains()} method to allow for dumping \texttt{Domains} instances into and out of the table. It automatically looks at its children widgets and extracts or sets the current value of each, so as to create the new \texttt{Domains} object representative of the UI elements' states, or dump an existing one. Those methods are abstractions designed to access states, but where does the program's current \texttt{Domains} object actually live? 
+	
+	That's exactly where the idea of runner and managers comes in. They are designed to help organize and manage the program's state. The \textbf{overall config panel} that contains all the various configuration tabs, like the nucleic acid profile tab and the domains tab, has a reference to the runner and a reference to its child tables. Its child tables fire events that tell the panel when an update has been made, where then the panel can call it's child's \texttt{fetch\_domains()} method, and store the instance returned in \texttt{self.runner.managers.domains.current} (and the same process is done by other managers too, simply by swapping out the "domains" for, say, "nucleic\_acid\_profile"). More discussion of how events work with NATuG will be provided later, but the general idea is that a widget can have fire-able events, and other widgets can subscribe to those events to do things when they are fired, such as is the case in this example.
+	
+	Another interesting implication of the manager system that NATuG utilizes is that it makes it possible in the future to allow for instances of the overall program to run simultaneously. This ability may be useful if editing multiple nanotubes side-by-side is desirable, or perhaps for superposition of structures. Modification would need to be made to externalize application-wide attributes of the runner, such as the \texttt{QApplication} instance that it holds, but attributes that hold the program state such as the managers could easily be ported to a reusable class, and UI components could be built out to provide various views of various states by allowing for the input of lists of runners, or perhaps tabs that contain copies of the existing widgets. None of this is implemented yet, but it should hopefully provide some insight into why the system currently is the way it is.
+	
+	\paragraph{Words of Caution} Giving UI elements access to the program's runner instance by passing it in upon initialization should be avoided whenever possible. Children should ``speak'' to their parent widgets to tell them to update the program's state, but access to the runners should be limited to only outermost UI elements like the config panel widget itself, for a few reasons. Firstly, the runner is powerful. Mutating attributes of the runner, such as its managers, can have extremely unexpected and program wide implications. By restricting access to who can \textit{access} it, it's much easier to debug the program. Secondly, requiring a runner instance to initialize a child component is also problematic because it makes it harder to allow for reuse of that component. For instance, the \texttt{TripleSpinbox} widget is used to allow for the storing and dumping of three integer inputs, for determining how many nucleosides to generate data for. If that element required a runner instance so that it could fetch the current count configuration from the \texttt{DomainsManager}, its parent would then also require a runner instance for the sole purpose of \textit{drilling} the reference down to that \texttt{TripleSpinbox}. Instead, whenever possible, we provide the outermost parent the runner instance, which utilizes the state to assign data to its inner children.
+	
+	\subsection{Saves}
+	The ``saves'' folder is \textbf{not} a Python module, but it \textbf{does} still take on a specific shape that is important to understand. The various ``managers'' (discussed in \ref{sect:managers}) rely on files in this folder for loading up and shutting down properly, since NATuG is designed to provide a degree of cross-execution state persistence.
+	
+	\texttt{launcher.py}, the script to boot NATuG, automatically will create missing folders to build up a properly-shaped saves folder if necessary. Additionally, the \textbf{DEBUG} flag in the launcher script will automatically delete all the restored-state files if it is set to \texttt{True}.
+	
+	Within the saves folder, there must be the following subfolders:
+	\begin{itemize}
+		\item \textbf{Domains:} Within this folder is a \textit{presets} subfolder, which contains all the preset domain configurations that NATuG possesses, along with a \textit{restored.csv} file, which is loaded in as the current program state when the program next boots. If \textit{restored.csv} cannot be found, \textit{presets/tengon.csv} is used instead.
+		
+		\item \textbf{nucleic\_acid:} This folder is a container for all the nucleic acid profiles that the user can choose from in the nucleic acid profile manager in the config tab of NATuG. NATuG will default to \textit{restored.json} upon booting, but if it cannot be found \textit{MFD\_B-DNA.json} is loaded instead.
+		
+		\item \textbf{Snapshots:} This folder is used to store complete program save files. Each file holds an entire program state, and they are numbered where higher numbers represent more recent program states. The snapshots in this folder are available for loading by the user in the snapshots tab of the config panel, or via simple control+z and control+shift+z shortcuts.
+		
+		\item \textbf{strands:} This folder currently doesn't store much. Right now, it has a subfolder called \textit{presets} that has preset viral sequences that can be loaded into the sequence property of strands. 
+	\end{itemize}
+	
+	\subsection{Structures}
+	The structures module is perhaps the most critical part of NATuG. This module contains the actual definitions of all the various different pieces of information needed to represent nanotubes, such as that of the Domains or the Nucleic Acid Profile. Additionally, logic pertinent to specific structures, such as Domains, lives within the definitions of the classes it is pertinent to as class methods. This means that program-critical functions like the \textbf{conjoin} function to create junctions, or the \textbf{link} function to create linkages, live in files in this module.
+	
+	Before exploring the specific parts of this module, one must understand how the module is structured. An understanding of the deliberate structure of the module is important not only so that specific classes can be easily located, but also to assure consistency when further structures are inevitably implemented into NATuG.
+	
+	The structures module is broken down into categories of structures, including one for domains, helices, strands, points, profiles, and more. Each category contains various class definitions for structures pertinent to the category, but broken down into subfiles of the module with the name of the class that they contain. Higher level structures may contain other lower level structures from the same module---for instance, the \texttt{Domains} class contains \texttt{Subunit} objects, which contain \texttt{Domain} objects. Likewise, some structures inherit from other structures, such as is the case for \texttt{Nucleoside} and \texttt{NEMid} objects, which inherit from \texttt{Point}.
+	
+	To import a given structure, you could use an absolute import statement along the lines of \texttt{import structures.domains.domain.Domain}, or \texttt{from structures.domains.domain import Domain}, but that's annoying to type out and somewhat redundant. Though Python, unlike javascript, doesn't have default-imports for modules, a similar idea is used by placing imports into the \texttt{\_\_init\_\_} folders of the modules. For example, in \texttt{structures/domains/\_\_init\_\_.py}, there exist relative imports like \texttt{from .domain import Domain}. That statement adds \texttt{Domain} to the namespace of the domains module itself so that it can be accessed via \texttt{structures.domains.Domain}, even though the definition lives in \texttt{structures.domains.domain.Domain}---in other words, it's an alias, and you should always use them and add them for structures that are intended to be accessed outside of the given structure submodule itself. \texttt{Domains} require access to the \texttt{Strand} object for instance, since they are able to generate strands, and so \texttt{structures/strands/\_\_init\_\_.py} provides an alias that domains uses for the import.
+	
+	\subsubsection{Profiles}
+	The profiles structure category includes the most important type of structures, profiles of constants. They can be thought of as simple key value tables with specific slots of input, and also various helper methods to compute additional constants from their data. It is the case that, perhaps unintuitively, beyond that description the interfaces of the profiles (of which there currently are two) are not much alike.
+	
+	\textbf{Note:} Profiles many include various properties defined using the \texttt{@property} decorator. This decorator defines a function that is computationally inexpensive, and allows you to access the given property through simple dot-syntax, as if the function underneath the \texttt{@property} tag were a property assigned directly to \textit{self}. The reason that the values that the properties return aren't assigned to the instance automatically at initialization is because profiles are mutable, and the constants that they store can change. One easy optimization here could be to properly cache the values of the properties and recompute them whenever any of the values of the profile changes, but this has not yet been implemented. 
+	
+	\paragraph{Nucleic Acid Profile} 
+	The nucleic acid profile contains the constants of the specific nucleic acid that the user is working with, and instances of \texttt{NucleicAcidProfile} are passed down to just about every other structure of NATuG. To change a property of a nucleic acid profile instance, you can simply overwrite it with a new value. Some values are properties that are automatically computed based on other properties, and those properties cannot be overwritten.
+	
+	The Nucleic Acid Profile provides a \texttt{to\_file()} and \texttt{from\_file()} method, which are simply wrappers on \texttt{dataclasses.asdict()} and \texttt{io} to dump the user set key values of the nucleic acid profiles to a \texttt{.json} file. For this application, \texttt{.json} makes sense since it is a very simple filetype for storing key-value pairs.
+	
+	Additionally, and importantly to understand, the Nucleic Acid Profile also has a \texttt{.update()} property, which lets you update the \textbf{entire} Nucleic Acid Profile in-place. Recall from earlier how the current instance of the various structures lives within \texttt{runner.managers.<manager-name>}. The Nucleic Acid Profile is no different. When you use \texttt{from\_file()}, or other methods elsewhere in NATuG that return \texttt{NucleicAcidProfile} objects, these objects are brand new. The \texttt{.update()} method lets you \textbf{copy} over the properties of a different \texttt{NucleicAcidProfile} over to a specific instance, so that wherever the profile is referenced the reference is up-to-date. 
+	
+	Perhaps an example would be of help to better understand the application of this class method. If somewhere in the user interface for Nucleic Acid Profile configuration a property of the Nucleic Acid Profile is changed, and the \texttt{fetch\_nucleic\_acid\_profile()} method of the nucleic acid profile configuration tab is called to fetch the new \texttt{NucleicAcidProfile}, we end up with a brand new object with the current profile data. The parent widget that fetched the new profile has access to the \texttt{runner}, so it may be tempting to try to mutate the current \texttt{NucleicAcidProfile} instance by writing \texttt{self.runner.managers.nucleic\_acid\_profile.current = new\_nucleic\_acid\_profile}. However, this is problematic since it will actually overwrite \texttt{nucleic\_acid\_profile.current} with the new profile, while all references all throughout NATuG will continue to point to the old profile. The old profile may be out of sync, and it won't get garbage collected, which is extremely problematic.
+	
+	\subsubsection{Domains}
+	The domains category of structure is one of the more complex structure types. The \texttt{Domains} object is the ultimate parent object, which contains information about all the domains in the nanostructure, along with some metadata, but in order to do so it has multiple layers of children. Below lies a breakdown of the various components of \texttt{Domains}, from the bottom up.
+	
+	\paragraph{Domain}
+	A \texttt{Domain} object is the child of a specific \texttt{Subunit} of domains. It stores data about a specific domain, such as its interior angle, helical switches, and generation counts (which is stored in a \texttt{GenerationCount} object, defined in the same file as \texttt{Domain}). It also has some aliases to properties of its parents, which currently are implemented but not used.
+	
+	\paragraph{Subunit}
+	A \texttt{Subunit} object is a container for a group of \texttt{Domain}s that is repeated a certain number of times for a rotationally symmetric structure, or not at all for a structure with a symmetry factor of 1. It has methods similar to that of a list, such as \texttt{.remove()} and \texttt{.append()}, since it is for most purposes a list of \texttt{Domain}s.
+	
+	A \textbf{template} subunit is a subunit that has its \texttt{template} attribute set to \texttt{True}, as to indicate that it is the template for all copies that are not templates. The \texttt{.domains()} method of the overall parent \texttt{Domains} class calls the \texttt{.subunits()} method, which generates the subunits, for which only one is a template, and that is the only real case where the template flag comes into play.
+	
+	\paragraph{Domains}
+	A \texttt{Domains} object is the main container for all things domain related. It contains a template subunit and symmetry factor, and provides helper functions such as \texttt{.count} to get the total number of domains with symmetry taken into account, or \texttt{.domains()} to get a list of all domains across all subunits.
+	
+	It is important to have a good understanding of how references in Python work before working with \texttt{Domains} objects, since it is very easy to produce unexpected results when generating and mutating domains. When you call \texttt{.domains()}, for instance, all the \texttt{Domain} objects that are returned are brand new objects, and are not attached to anything. Changing a property of one of the returned domains will not change the overall \texttt{Domains} object. To mutate a specific domain in the \texttt{Domains} container, you'll want to mutate the domain in the template subunit directly, by writing something along the lines of \texttt{main\_domains\_object.subunit[1].theta\_m = 8}, or swapping that \texttt{Domain} reference out for a different one.
+	
+	\subsubsection{Points}
+	The points category of structure is probably the most intuitive type of structure. There's three main types of points, which are all descendants of the \texttt{Point} object: \texttt{NEMid}, \texttt{Nucleoside}, and \texttt{Nick}. There's also a \texttt{Pseudo} point, which is meant to be a placeholder point, but it is currently not used.
+	
+	Points are datastructures, and, though they provide some useful methods like getting its helical\_index, 
+	
+	\paragraph{Point}
+	The parent class of the specific types of points is the \texttt{Point} class. The point stores various pieces of data, such as its coordinates, angle, helical index, and more. These data are set automatically by the \texttt{.compute()} method of \texttt{DoubleHelices}, but can be overwritten in case the user wants to modify them.
+	
+	Points also provide some helper methods, like \texttt{.overlaps()} to see if the point overlaps another point, or \texttt{.is\_endpoint()} to see if the point is an endpoint of its strand. If a specific condition is checked often of a point, making it a method of point may not be a bad idea.
+	
+	\subparagraph{Styling}
+	\texttt{Point} objects also contain styles, which dictate the specific styles of the point. The styles of a specific point are ephemeral, however, since the \texttt{.style()} method of \texttt{Strands} will automatically overwrite the styles of all the points in all the strands. Once the points have had their styles computed, before everything gets restyled (as would happen when junctions were created, the user clicked the restyle button, or the user changes the color of a specific strand, for example), the state of the point's style can be changed to alter its appearance in a consistent way. To change the state of a point, call \texttt{Point.change\_state()} with a new state. Currently ''default,`` ''highlighted,`` and ''selected,`` are supported.
+	
+	\subsubsection{Helices}
+	The \texttt{helices} category of structure represents all the helices of the nanostructure. It is important to grasp how helices are different from strands both fundamentally and in implementation. When domain settings are modified and the strands and helices are generated, the data that the strands and helices store is roughly the same. However, helices represent each individual double helix within its own domain, not taking into account strand exchanges.
+	
+	Strands are generated based off of \texttt{Helix}es, and can be further mutated by the user. Technically \texttt{Helix}es are also sometimes mutated by the user, but this really only happens when nicks are created. \texttt{Helix} objects, however, are designed to be easy and computationally cheap to generate, but, as a tradeoff, are harder to mutate and cannot be reshaped (i.e. you can't change the length of a helix after it has been generated, since they implement fixed-sized arrays). Strands, on the other hand, are designed to store highly mutable data. In the early days of NATuG \texttt{Strand}s took on a linked list data structure, but now they implement a dynamically resized array, since they allow for faster lookups, which turns out to be more important than quick additions. Strands store chains of point and container objects, such as \texttt{Nucleoside}s, \texttt{NEMid}s, and \texttt{Linkage}s (which are containers of \texttt{Nucleosides}). These two datatypes are completely different, so it is important not to mix them up, even though they contain references to the same \texttt{Point} objects.
+	
+	\paragraph{Helix}
+	The \texttt{Helix} class is a child of a \texttt{DoubleHelix} that on its own is merely a highly customized container, designed to be loaded with data by its grandparent \texttt{DoubleHelices} object. Once loaded with data, the Helix provides some extremely useful methods that are used (also by its grantparent \texttt{DoubleHelices} object) to generate a \texttt{Strands} container object.
+	
+	The most important attribute of the \texttt{Helix} is the \texttt{.data} property, which holds a few fixed sized arrays of data, such as \texttt{x\_coords} and \texttt{angles}. It also has a \texttt{Point}s array, which, when the \texttt{Helix}'s \texttt{.points()} method is called fills up with the \texttt{NEMid} and \texttt{Nucleoside} objects that are computed based on its numerical data.
+	
+	\paragraph{Double Helix}
+	The \texttt{DoubleHelix} class is, at its essence, a container for two \texttt{Helix} objects. Internally it stores its two helices by direction---\texttt{UP} and \texttt{DOWN}---in a two-element array of \texttt{Helix}es, but its interface provides many different ways to access either, since each helix of a given \texttt{DoubleHelix} has many different aliases. For instance, you can access the ''right`` helix with \texttt{DoubleHelices.right\_helix}, or the zeroed helix with \texttt{DoubleHelices.zeroed\_helix}. Extended explanations of what the aliases represent can be found in the \texttt{DoubleHelices}'s docstring.
+	
+	\paragraph{DoubleHelices}
+	The \texttt{DoubleHelices} object is an extremely important higher-level element that contains \textbf{all} the \texttt{Helix} objects, neatly packaged into \texttt{DoubleHelix} bundles. Though it requires a list of \texttt{DoubleHelix} instances to initialize, it offers a useful \texttt{from\_domains()} classmethod to create an instance from a \texttt{Domains} instance instead, which automatically takes care of creating the \texttt{DoubleHelix}es.
+	
+	Perhaps the most important functions of all of NATuG live inside the definition of a \texttt{DoubleHelices}. Its \texttt{.compute()} method computes the coordinate and angle data for all the child \texttt{Helix}es, and its \texttt{.strands()} method implements the \texttt{Helix}es' \texttt{.strand()} methods to create an overall \texttt{Strands} object.
+	
+	\subsubsection{Strands}
+	The strands category of structure is a much more flexible datastructure that stores arrays of points in a form that allows for easy merges, splits, removals, appendages, and the like. Strands also control the styling of points and outlines in the side view plot, and are what provide the ability to create junctions, linkages, and other actions that alter the current strands.
+	
+	\paragraph{Strands}
+	The \texttt{Strands} object is an unordered container for many \texttt{Strand} objects. The container provides various methods to mutate strands, including the \texttt{.conjoin()} function to create junctions and the \texttt{.nick()} function to create nicks. Generally there is only ever one instance of \texttt{Strands} alive at a given time, and all \texttt{Strand} objects belong to it.
+	
+	\texttt{Strands} are also responsible for storing a list of all of the current \texttt{Nick}s in play, which is useful to know, since to otherwise obtain the nicks you'd need to traverse every single strand one at a time.
+	
+	\paragraph{Strand}
+	A \texttt{Strand} object contains an array under its \texttt{.items} attribute of ordered points. These points are stored in a container called a \texttt{StrandItems}, which provides some useful methods for unpacking the points like \texttt{by\_type()} or \texttt{unpacked()} (useful for unpacking items in subcontainers, like linkages).
+	
+	\subparagraph{Styling}
+	Strands also have \textbf{styles} stored under their \texttt{.styles} attribute, which store various graphical style information like the thickness of the strand, the color of the strand, and whether or not the strand is highlighted. The properties within the styles of a strand are read by the \texttt{Plotter} classes later on to visually plot the \texttt{Strands}.
+	
+	What makes the styling of strands slightly confusing is that these specific style properties take the form of \texttt{StrandStyle} objects, which hold the value of the style and a ''automatic`` flag. This is because by default strands are styled in a specific way, and the values are set for the strands by the parent \texttt{Strands} container, but if automatic is set to false the parent \texttt{Strands} container does not overwrite the styles. 
+	
+	\subsection{Tools}
+	The tools folder is simply a place to put all miscellaneous Python scripts that are not directly hooked into NATuG, but have logic that may be of use down the road.
+	
+	\subsection{UI}
+	The UI module contains all the widgets and window definitions needed to provide a graphical user interface for interaction and preview of the current instances (which live in the runner's managers) of the various structures of NATuG. The UI module is broken into various different parts, and it is easiest to understand how they piece together by taking a top-down approach. 
+	
+	Most of the UI submodules that take the form of panels in the main window have a \texttt{Panel} class that groups together their various counterparts. For example, the config panel has many tabs, and tabs have different parts like tables and input boxes. Each tab has a \texttt{Panel}, and then there's another \texttt{Panel} that lives in the \texttt{config} submodule itself that imports the panels from all the subsubmodules and displays them as a list of tabs. It may be confusing that all the panels are named \texttt{Panel}, but they are located within sensical subfolders, and can be imported with Python's \textit{as} syntax if needed for further clarity (i.e. \texttt{from ui.config import Panel as ConfigPanel}).
+	
+	\subsubsection{Window}
+	The \texttt{Window} submodule is the class with the definition for the main window of NATuG. It has a \texttt{setup()} method which calls various private methods that configure various parts of the main window. The runner automatically handles this setup phase before displaying the window.
+	
+	In PyQt the main window of the application is generally a \texttt{QMainWindow} descendant, and this is the case for NATuG too. PyQt has various useful slots for UI components in this class, such as an area for a toolbar, a status bar, dock widgets, and the like. The most important widget in the main window is the ''central widget,`` which in the case of NATuG is a \texttt{QSlider} widget that contains both the current top and side view plots.
+	
+	The window imports from various UI submodules to construct one neatly integrated main window, but most of the actual logic for the submodules lives in their own respective folders. Since the main window is a property of the runner, anything with access to the runner has access to any property of the main window, and can do things like refresh the plots or alter the current config tab, for instance.
+	
+	\subsubsection{Config}
+	The config submodule contains all the relevant widgets for the config panel, which is the tabbed widget on the right side of NATuG. The config panel has a few different tabs, which have their own panel definitions in \texttt{ui/config/tabs/[tabName]}. Config imports the various tabs and loads them into the a \texttt{QTabWidget}.
+	
+	\paragraph{Updating plots}
+	Each of the submodules of config have access to an instance of \texttt{runner}, and are able to mutate the current program state. For all the submodules, when mutating the program state they use a conditional \texttt{if RefreshConfirmer.run():}, which will automatically prompt the user to save their changes or cancel if changes are to be lost if things refresh, or returns \texttt{True} if there is no risk. Once they have updated the program state, they send an \texttt{updated} signal which the config panel is subscribed to, and that triggers the config panel's \texttt{\_on\_tab\_updated()} method, which checks if auto-updating is enabled and then conditionally updates the plots.
+	
+	The file \texttt{dockable.py} within the config module is simply a wrapper for the config panel that allows it to be docked to the main window. No important logic is contained there, and it is simply a means to allow the config panel to detach from the main window.
+	
+	\subsubsection{Dialogs}
+	The dialogs submodule contains definitions for various complex dialogs that fetch information from users. For simple warnings, \texttt{utils.warning()} should be used, and for simple confirmations, \texttt{utils.confirm()} should be used. 
+	
+	Generally dialogs are implemented by passing in an object of some sort during initialization and then subscribing to updates or the close event. Take, for example, the \texttt{StrandConfig} dialog. The side view plot automatically hooks a function onto the strand-click event such that a \texttt{StrandConfig} is displayed whenever a strand is clicked in the side view plot. The \texttt{Strand} object that is clicked is passed in on initialization, and the user can use the dialog to change various settings of the strand like its color and thickness, along with viewing various properties. The plot knows to refresh after updates have been made/the panel is closed because before even displaying the \texttt{StrandConfig} dialog the side view plot calls \texttt{dialog.updated.connect(self.refresh)} to automatically trigger a refresh whenever the \texttt{update} event of the dialog is \texttt{.emit()}ted.
+	
+	This is the case for most dialogs, even for ones that seem like they have no effect on program state. For example, the informers do not appear to change anything, and their main purpose is to display information. However, they change the current style state of a given point object to \texttt{highlighted}, which requires a side view plot refresh.
+	
+	\subsubsection{Menubar}
+	The menu bar is the top area of the screen with submenus like ''File,`` ''View,`` and ''Edit.`` At the moment the logic for the options in these menus is very simple. Each menu in the menu bar has its own definition, and they are linked together in \texttt{menubar.py}.
+	
+	\subsubsection{Plotters}
+	The plotters are the widgets responsible for plotting strand data. They inherit from \texttt{Plotter}, which provides an \texttt{export()} method, which inherits from \texttt{pyqtgraph.PlotWidget}.
+	
+	There are two plotters, a \texttt{TopViewPlotter} and \texttt{SideViewPlotter}. Both plotters have a \texttt{.plot\_data} attribute that stores a \texttt{PlotData} item, defined separately in the respective plotter's file. The idea behind the plot data object is to store information about the currently plotted data, in case the program state changes and the data that is currently plotted falls out of sync. This is not really taken advantage of as-is, but the plot data does stay up to date with what is actually plotted, which may be useful down the line.
+	
+	Both plotters have plot methods, but these methods should not be called directly. The data passed in (e.g. Strands, Domains) will automatically be plotted at initialization, and to update the plot to match data that has changed the respective plotter's \texttt{.refresh()} method should be called, which will automatically clean up the plot and plot new data. Likewise, both plotters have \texttt{.\_prettify()} methods to add axis labels, gridlines, and the like, but that will also automatically be called during refreshing and initialization. The plotters also both provide various useful events, defined at the top of their classes, which are documented in the docstring of the respective plotter. These events are subscribed to in the {Panels} submodule of UI, which will be discussed subsequently. 
+	
+	The plotters can be customized through parameters set at initialization (that can also be changed later), like the \texttt{TopViewPlotter}'s \texttt{.rotation} attribute/argument, which controls how rotated the plot is, or, for the side view plotter specifically, through alteration of its \texttt{.modifiers}; the side view plot's modifiers change the sizing of various plot features by multipliers stored in a \texttt{PlotModifiers} instance.
+	
+	\subsubsection{Panels}
+	The panels submodule contains wrappers for the side and top view plotters. They store under a \texttt{.plot()} attribute their \texttt{TopViewPlotter} or \texttt{SideViewPlotter}, and they act as display frames and event managers. They are both \texttt{QGroupBox} descendants, which is a type of PyQt class that allows for adding a nice looking label above items. They also both possess methods that hook into the various events of their respective plotter. For example, the side view panel has a \texttt{\_on\_linkage\_clicked()} method that is hooked to the \texttt{SideViewPlotter.linkage\_clicked} event, and defines how to handle the event (in this example, it makes a \texttt{LinkageConfig} dialog).
+	
+	Though these widgets are frames that store a plot internally, they do do additional logic upon refreshes, like reassigning references, so while you could refresh a plot through \texttt{runner.window} instance by doing something like \texttt{runner.window.side\_view\_plot.plot.refresh()}, you should use \texttt{runner.window.side\_view\_plot.refresh()} instead. In both cases the Plotter's \texttt{refresh()} method will eventually get called.
+	
+	\subsubsection{Resources}
+	The resources submodule is pretty simple in purpose: it stores various graphical resources that NATuG relies on, such as icons. \texttt{workers.py} provides helper functions, like \texttt{fetch\_icon()}, but that's about it.
+	
+	\subsubsection{Toolbar}
+	The toolbar is currently a list of buttons of side view plot modes. PyQt supports multiple toolbars, so down the line another toolbar may be added for top view plot modes. \texttt{actions.py} has a \texttt{Actions} class, which is a \texttt{QButtonGroup} of actions that are mutually exclusive (only one action can be chosen at a time). The various actions are defined within the \texttt{Actions} class, and inherit from \texttt{Action} some basic styles. Each action has an ID that is a constant that can be found in the constants module. \texttt{toolbar.py} assembles the actions and other basic toolbar widgets like the action repeater button into one continous toolbar to be placed at the top of the main window in \texttt{Window}.
+	
+	\subsubsection{Widgets}
+	This module is meant for miscellaneous widgets that can be reused throughout the app and are not tied to specific structures or features. They should be designed with re-usability in mind. Modules here are imported throughout the application, and these widgets are fairly generic.
+	
+	For example, the \texttt{TripleSpinbox} lets a user choose three integer values, and provides an API to set/get the values. It's very simple, and even though it only currently has one use, it could be implemented elsewhere, or in an entirely different project all together. If a module relies on any NATuG-specific data structure it probably shouldn't go into the \texttt{widgets} module.
+	
+\end{document}
