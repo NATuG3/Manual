@@ -14,10 +14,10 @@
 	\tableofcontents 
 	\newpage
 	
-	\section{Navigating the Codebase}
+	\section{Codebase}
+	This section provides information on how to go about navigating NATuG's codebase, and also some general protocols and procedures to follow for future development of NATuG.
 	
 	\subsection{Comments}
-	
 	NATuG's codebase implements Python's two main types of comments: inline comments and docstrings.
 	
 	\paragraph{Docstrings}
@@ -26,7 +26,13 @@
 	\paragraph{Comments}
 	NATuG utilizes inline comments less so than it does docstrings, and wherever appropriate. Comments should be used to explain how things work or what things do. Comments should \textbf{not} be used for book-keeping, such as recording changes, insertions, or TO-DOs.
 	
-	\section{NATuG's Modules}
+	\subsection{Logging}
+	Logging is a critical part of debugging NATuG. When you run NATuG, what prints to the console may look like an endless indecipherable stream of useless information, but in reality it's a one-by-one sequential listing of actions that were run. When debugging, it can be useful to look at the most recently run action before an error was thrown, as the logs also provide information about various pertinent variables and the like. At the moment NATuG displays \textbf{all} messages that are logged, but in \texttt{launcher.py} you can change the logger's config to only display messages above a certain tier, which allows you to mute debug messages in production. 
+	
+	\paragraph{Implementing logging}
+	When new non-trivial features are added to NATuG, logging should almost always be implemented. NATuG takes advantage of Python's built-in \texttt{logging} library for logging, which is super simple to use. The library allows you to log things with differing levels of importance, ranging from debug messages to informational messages to warnings. In general, when you'd like to add logging to a given feature of NATuG you should include \texttt{import logging} at the top of the file, followed by the global definition \texttt{logger = logging.getLogger(\_\_name\_\_)}. This creates a \texttt{Logger} instance that will indicate in the console the file that is sending the log messages. Then, when you want to then go about adding log statements to the file, add clean and not overly informative \texttt{logger.info} statements, and then more generous and detailed \texttt{logger.debug} statements throughout. Whenever you wish to include external data into log messages, use \texttt{\%s} in your log statements, and then comma-separate all the values that you substituted \%s for in the message. For example, if you want to log \texttt{The counter has reached X} as a debug log message, you'd generally want to write something like \texttt{logger.debug("The counter has reached value \%s", counter)}.
+	
+	\section{Modules}
 	To properly understand how NATuG functions, it is important to understand what parts comprise NATuG, and how they combine to form the overall program.
 	
 	In the parent directory of NATuG there exist a few different folders, many of which are modules (a Python module is a folder with a \texttt{\_\_init\_\_.py} file in it), which each serve an important, distinct purpose. Within some of these parent modules live submodules, which contain files that relate to the folder that they are in, and so forth.
@@ -157,10 +163,10 @@
 	What makes the styling of strands slightly confusing is that these specific style properties take the form of \texttt{StrandStyle} objects, which hold the value of the style and a ''automatic`` flag. This is because by default strands are styled in a specific way, and the values are set for the strands by the parent \texttt{Strands} container, but if automatic is set to false the parent \texttt{Strands} container does not overwrite the styles. 
 	
 	\subsection{Tools}
-	The tools folder is simply a place to put all miscellaneous Python scripts that are not directly hooked into NATuG, but have logic that may be of use down the road.
+	The tools folder is simply a place to put all miscellaneous Python scripts that are not directly hooked into NATuG, but have logic that may be of use down the road. Nothing in this folder is integrated into NATuG, and this folder is meant purely to serve as an organizational tool.
 	
 	\subsection{UI}
-	The UI module contains all the widgets and window definitions needed to provide a graphical user interface for interaction and preview of the current instances (which live in the runner's managers) of the various structures of NATuG. The UI module is broken into various different parts, and it is easiest to understand how they piece together by taking a top-down approach. 
+	The UI module contains all the widgets and window definitions needed to provide a graphical user interface for interaction and preview of the current instances (which live in the runner's managers) of the various structures of NATuG. The UI module is broken into various different parts, and it is easiest to understand how they piece together by taking a top-down approach.
 	
 	Most of the UI submodules that take the form of panels in the main window have a \texttt{Panel} class that groups together their various counterparts. For example, the config panel has many tabs, and tabs have different parts like tables and input boxes. Each tab has a \texttt{Panel}, and then there's another \texttt{Panel} that lives in the \texttt{config} submodule itself that imports the panels from all the subsubmodules and displays them as a list of tabs. It may be confusing that all the panels are named \texttt{Panel}, but they are located within sensical subfolders, and can be imported with Python's \textit{as} syntax if needed for further clarity (i.e. \texttt{from ui.config import Panel as ConfigPanel}).
 	
@@ -213,5 +219,38 @@
 	This module is meant for miscellaneous widgets that can be reused throughout the app and are not tied to specific structures or features. They should be designed with re-usability in mind. Modules here are imported throughout the application, and these widgets are fairly generic.
 	
 	For example, the \texttt{TripleSpinbox} lets a user choose three integer values, and provides an API to set/get the values. It's very simple, and even though it only currently has one use, it could be implemented elsewhere, or in an entirely different project all together. If a module relies on any NATuG-specific data structure it probably shouldn't go into the \texttt{widgets} module.
+	
+	\subsubsection{Settings}
+	The \texttt{settings.py} file is important to discuss even though it is not technically its own folder. It contains various constants that are used throughout the program. Any file in the codebase can \texttt{import settings} to instantly get access to the values stored in the module. The attributes of \texttt{settings.py} \textbf{should not} be changed during program execution, simply because the only way to save the properties to disc would be to overwrite the Python file itself. Down the line when a proper settings panel is introduced settings should instead be stored in a SQLLite or JSON file.
+	
+	\section{Persistence}
+	This section is dedicated to discussing how NATuG persists the program state between program boots. It discusses both partial program saves, such as saving a domain configuration or nucleic acid profile, and holistic program saves, such as saving the entire program state into a \texttt{.natug} file.
+	
+	\subsection{Fundamentals}
+	Before reading on to figure out how persistence works, it is important to understand how NATuG was constructed with the ability to persist data in mind. 
+	
+	Almost all structures in NATuG have a \texttt{uuid} attribute, which is a unique id that should always be unique, across space and time. No two objects will have identical \texttt{uuids}, which is critical. The reason for this is because of how highly relational NATuG is. Each point (nucleoside, NEMid, nick, etc.) may exist in a strand, a helix, a linkage, or some other container (the \texttt{Strands} object has a list of all the current nicks in existence, for example---an easily overlooked place where points are stored). Since all the point objects have \texttt{uuid}s, the points can be referenced by their ids, much like how they are internally referenced with memory pointers in Python. Then, again similar to how pointers work, when loading back a program state the points can be generated first, and a hash table can be constructed to allow for $O(1)$ look-ups of given points when reconstructing containers.
+	
+	\subsubsection{Holistic}
+	
+	NATuG's exporting system is complex because of how it serializes the data of all the structures. Rather than dumping the program state to a giant binary file, as is the case with pickling, for instance, NATuG converts all the data into a blend of JSON and CSV files with stringified data, and then packages that data neatly into a ZIP archive to containerize it. The ZIP archive is then renamed to \texttt{.natug}, even thoguh its schema is still that of a ZIP file's (this is a common containerization approach, used by other popular software such as Microsoft Word). The various structures of NATuG provide methods for serializing and then dumping their data, but it is a higher level driver script that actually implements those functions to holistically dump the  program state to disc.
+	
+	At the highest level, under \texttt{runner/filehandler.py} the \texttt{FileHandler} class defines a method for saving and loading program states into the program's runner. The \texttt{runner} stores an instance of a \texttt{FileHandler}, and its save and load methods wrap onto the filehandler's. Then, in the \textit{save} method of the filehandler a ZIP filesystem context is created, and data is retrieved through NATuG's runner from the various managers automatically as Pandas dataframes and dictionaries, which then the file handler converts to JSON strings and CSV files and then funnels into the ZIP archive. To rebuild the program state, a giant dictionary is created in the \textit{load} method of the filehandler, and all of NATuG's datastructures are loaded into the dictionary with their key being their uuid, and the value being the instance, starting with the smallest subunits, like individual Nucleosides and NEMids. Then, as higher order containers like \texttt{Strand}s reference their children, their children are fetched by lookups in the dictionary.
+	
+	\paragraph{Strands, Helices, \& Points}
+	For Strands and Helices the process for saving is roughly similar. They both have a \texttt{.to\_json()} method that stores a few attributes of the overall highest order structure, but, most importantly, have a list of \texttt{uuid}s of its children. For instance, the JSON that you get from \texttt{Strands.to\_json()} has a \texttt{uuid} with the strands container's \texttt{uuid}, but also contains a \texttt{strand} key with all the child strands. In the \textbf{file}s of the lower order structures, such as the file where the \texttt{Strand} class definition lies, there exists a function outside of the \texttt{Strand} class that takes as input many of the lower order structures, in this case \texttt{Strand} objects, as a list, and outputs a Pandas dataframe with the data of all those structures. This \texttt{to\_df()} function will iteratively serialize the objects (for each instance in the list passed in to be made into a dataframe a specific set of serialization instructions will be executed) and then they return the tabulated dataframe. Panda dataframes natively support exports to many formats, including CSVs. The columns generally align with the attribute of the class of data that it is storing, and the data is categorized by adding a category name followed by a colon before each column name (for instance, most of the hard-data properties like coordinates have column names like \texttt{data:x-coords}). Hyphens are used in column names instead of spaces.
+	
+	\paragraph{Domains \& Profiles}
+	The save process for domains and profiles is more straightforward. The overall \texttt{Domains} container conveniently provides a \texttt{to\_df()} and \texttt{from\_df()} method, which can be used to serialize and deserialize the structure into a single CSV file. Likewise, the \texttt{NucleicAcidProfile} offers a \texttt{to\_file()} and \texttt{from\_file()} method, along with a \texttt{to\_df()} function in the same file, for similarly easy one file storing.
+	
+	\subparagraph{Partial Storage}
+	Also important for these specific types of structures is that because of their single file store capability, they are eligible to be saved in isolation of the other parts of the program state. In these cases where the saves are partial, they are referred to as ''profiles``. Most higher order structures, like \texttt{Domains}, \texttt{Strands}, and \texttt{Helices} have some sort of method to export them to a static savable format that references its children by id, which requires that the children are saved on their own elsewhere, which is why they cannot be saved without a holistic program state save. 
+	
+	\subsection{Excel}
+	Originally saving in NATuG was going to implement dumping all the program data to an Excel spreadsheet. The idea was that cells could be linked together, and relational information like NEMids and Nucleosides could have their own ''points`` tab, and then the cells for given points could be referenced in other tabs like a ''helices`` tab. All the data could be neatly formatted and even color-coded, given how highly visual and customizable Excel is.
+	
+	When Excel file handling was being implemented, it was decided that NATuG would utilize the \texttt{xlsxwriter} library to write spreadsheets, but by the time most of the base code was written to build out spreadsheets, NATuG's author determined that that library did not provide any support for reading spreadsheets. As a result of such, NATuG now also requires \texttt{openpyxl} as a dependency for some of the structures' \texttt{read\_worksheet} methods. Both the worksheet writer and reader functions take in some sort of Excel workbook object, and mutate it or extract information from it in some specific way. The idea is that eventually some driver would be implemented that would have access to the current program's runner, and that driver would automatically write out worksheets for the various facets of data.
+	
+	In reality, this system was very difficult to implement, and because Excel files are of a custom file format that's not optimized for automatic generation and reading, it was quite slow to dump and read data to/from. For this reason support for Excel file handling was abandoned, but some traces of the old system still remain in the codebase. This is because even though it is a much slower system for saving the program state than the current method, there are still advantages to the Excel file format. The code that remains indeed outdates the current schema of the various structures of NATuG, but should still make it simpler to add Excel support later on.
 	
 \end{document}
